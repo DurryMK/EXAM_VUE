@@ -87,7 +87,6 @@
 
 		},
 		mounted() {
-			this.$axios.defaults.withCredentials = true
 			if (this.isCopy) {
 				//开启禁止复制
 				this.$nextTick(() => {
@@ -192,7 +191,7 @@
 				let imgStr = this.getImage()
 				imgStr = imgStr.replace("data:image/png;base64,", "")
 				this.$axios({
-					url: this.baseUrl + "/faceDetectionOp",
+					url:  "/faceDetectionOp",
 					method: "POST",
 					params: {
 						imgStr: imgStr,
@@ -242,7 +241,7 @@
 				let imgStr = this.getImage()
 				imgStr = imgStr.replace("data:image/png;base64,", "")
 				this.$axios({
-					url: this.baseUrl + "/faceCompareOp",
+					url:  "/faceCompareOp",
 					method: "POST",
 					params: {
 						imgStr: imgStr,

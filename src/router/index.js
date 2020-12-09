@@ -5,13 +5,14 @@ import VueRouter from 'vue-router'
 // 可以从其他文件 import 进来
 
 import App from '../App.vue'
-const Personal = ()=>import("@/components/Personal")
-const Loading = ()=>import("@/components/Loading")
-const Home = ()=>import("@/components/Home")
-const Welcome = ()=>import("@/components/Welcome")
-const List = ()=>import("@/components/Testlist")
-const Login = ()=>import("@/components/Login")
-const Make = ()=>import("@/components/Make")
+const Personal = () => import("@/components/Personal")
+const Loading = () => import("@/components/Loading")
+const Home = () => import("@/components/Home")
+const Welcome = () => import("@/components/Welcome")
+const List = () => import("@/components/Testlist")
+const Login = () => import("@/components/Login")
+const Make = () => import("@/components/Make")
+const QuestionList = () =>import("@/components/QuestionList")
 Vue.use(VueRouter)
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -36,7 +37,7 @@ const routes = [{
 		path: '/Loading',
 		name: 'Loading', //过渡组件，
 		component: Loading //对应的组件模板
-	},{
+	}, {
 		path: '/EXAM',
 		name: 'Home', //主页面，
 		component: Home, //对应的组件模板
@@ -56,8 +57,17 @@ const routes = [{
 			},
 			{
 				path: '/Personal',
-				name: 'Personal', //欢迎页面，
+				name: 'Personal', //个人页面，
 				component: Personal //对应的组件模板
+			}, {
+				path: '/List',
+				name: 'List', //题目列表，
+				component: List //对应的组件模板
+			},
+			{
+				path: '/QuestionList',
+				name: 'QuestionList', //题目列表，
+				component: QuestionList //对应的组件模板
 			}
 		]
 	}

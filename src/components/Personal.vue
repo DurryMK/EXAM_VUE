@@ -26,8 +26,8 @@
 								<el-input v-model="user.mobile"></el-input>
 							</el-form-item>
 							<el-form-item label="实名认证">
-								<el-tag v-show="user.isRname">已实名</el-tag>
-								<el-tag v-show="!user.isRname" type="danger">未实名</el-tag>
+								<el-tag v-show="user.isRname == 1">已实名</el-tag>
+								<el-tag v-show="user.isRname == 0" type="danger">未实名</el-tag>
 							</el-form-item>
 							<el-form-item label="QQ">
 								<el-input v-model="user.qq"></el-input>
@@ -56,7 +56,7 @@
 			return {
 				isLoading: true,
 				title: "",
-				user: [],
+				user: new Object(),
 			}
 		},
 		mounted() {
@@ -65,13 +65,12 @@
 		methods: {
 			initPage() {
 				this.$axios({
-					url: this.baseUrl + "/personal/initPage",
+					url:  "/home/personal/initPage",
 					method: "GET",
 				}).then(res => {
-					console.log("Personal.vue:")
 					console.log(res)
 					if (res.data.E_BACKSTATUS == '0') {
-						this.user = res.data.user
+						this.user = res.data.E_BACKINFO
 						this.title = this.user.username + "的个人信息"
 						this.isLoading = false
 						//填充页面信息

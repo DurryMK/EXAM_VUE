@@ -247,7 +247,6 @@
 			}
 		},
 		mounted() {
-			this.$axios.defaults.withCredentials = true
 		},
 		methods: {
 			handleSelect(key, keyPath) {
@@ -265,12 +264,11 @@
 					}
 				})
 				this.$axios({
-					url: this.baseUrl + "/access/quickLogin",
+					url:  "/access/quickLogin",
 					method: "POST",
 					params: this.quickForm
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
-						this.isLogin = true
 						this.hint(res.data.E_BACKINFO, "success")
 						//1秒后跳转主页面
 						let _this = this
@@ -278,7 +276,6 @@
 							_this.toHome()
 						}, 1000)
 					} else {
-						this.isLogin = false
 						this.hint(res.data.E_BACKINFO, "error")
 					}
 				})
@@ -291,7 +288,7 @@
 					}
 				})
 				this.$axios({
-					url: this.baseUrl + "/doLogin",
+					url:  "/doLogin",
 					method: "POST",
 					params: this.loginForm
 				}).then(res => {
@@ -310,7 +307,7 @@
 					}
 				})
 				this.$axios({
-					url: this.baseUrl + "/doLogin",
+					url:  "/doLogin",
 					method: "POST",
 					params: this.regForm
 				}).then(res => {
@@ -328,7 +325,7 @@
 				this.quick_loading = (flag == 1) ? true : false
 				var mobile = (flag == 1) ? this.quickForm.mobile : this.regForm.mobile
 				this.$axios({
-					url: this.baseUrl + "/sendLoginVcode",
+					url:  "/svode/sendLoginVcode",
 					method: "get",
 					params: {
 						mobile: mobile

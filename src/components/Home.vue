@@ -20,47 +20,38 @@
 			<!-- 侧边菜单 ——控制中心 -->
 			<el-aside v-show="asideMenu==101" width="220px">
 				<el-menu class="el-menu-vertical-demo" @select="handleSelectAside" @open="handleOpen" @close="handleClose">
-					<el-submenu index="试卷管理">
-						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>由我出题</span>
-						</template>
-						<el-menu-item-group>
-							<el-menu-item index="/Make">新建试卷<i class="el-icon-document-add"></i>
-							</el-menu-item>
-							<el-menu-item index="/List">试卷列表<i class="el-icon-setting"></i></el-menu-item>
-						</el-menu-item-group>
-					</el-submenu>
-					<el-menu-item index="加入考试" @click="dialogVisible = true">
-						<span slot="title"><i class="el-icon-menu"></i>加入考试</span>
+					<el-menu-item index="/Make">
+						<i class="el-icon-s-promotion"></i>
+						<span slot="title">由我出卷</span>
 					</el-menu-item>
-					<el-menu-item index="查看成绩">
-						<i class="el-icon-document"></i>
-						<span slot="title">查看成绩</span>
+					<el-menu-item index="/List">
+						<i class="el-icon-document-copy"></i>
+						<span slot="title">试卷管理</span>
+					</el-menu-item>
+					<el-menu-item index="/Questionlist">
+						<i class="el-icon-s-grid"></i>
+						<span slot="title">EXAM题库</span>
 					</el-menu-item>
 				</el-menu>
 			</el-aside>
 			<!-- 侧边菜单 ——用户信息 -->
 			<el-aside v-show="asideMenu==100" width="220px">
 				<el-menu class="el-menu-vertical-demo" @select="handleSelectAside" @open="handleOpen" @close="handleClose">
-					<el-submenu index="试卷管理">
-						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>试卷管理</span>
-						</template>
-						<el-menu-item-group>
-							<el-menu-item index="/Make">新建试卷<i class="el-icon-document-add"></i>
-							</el-menu-item>
-							<el-menu-item index="/List">试卷列表<i class="el-icon-setting"></i></el-menu-item>
-						</el-menu-item-group>
-					</el-submenu>
-					<el-menu-item index="实名认证">
-						<i class="el-icon-menu"></i>
-						<span slot="title">实名认证</span>
-					</el-menu-item>
 					<el-menu-item index="/Personal">
 						<i class="el-icon-user"></i>
 						<span slot="title">我的信息</span>
+					</el-menu-item>
+					<el-menu-item index="加入考试" @click="dialogVisible = true">
+						<span slot="title"><i class="el-icon-edit-outline"></i>加入考试</span>
+					</el-menu-item>
+					<el-menu-item index="查看成绩">
+						<i class="el-icon-s-claim"></i>
+						<span slot="title">查看成绩</span>
+					</el-menu-item>
+					<el-menu-item index="实名认证">
+						<i v-if="user.isRname == 1" class="el-icon-star-on"></i>
+						<i v-if="user.isRname == 0" class="el-icon-star-off"></i>
+						<span slot="title">实名认证</span>
 					</el-menu-item>
 					<el-menu-item index="退出登录" @click="exitLogin">
 						<span slot="title"><i class="el-icon-switch-button"></i>退出登录</span>
@@ -101,6 +92,7 @@
 		['/Welcome', '欢迎页'],
 		['/List', '试卷列表'],
 		['/Personal', '个人信息'],
+		['/Questionlist','EXAM题库']
 	]) //标签卡与router-view的对应关系
 
 	export default {
@@ -162,10 +154,9 @@
 		methods: {
 			initPage() { //获取初始化页面信息
 				this.$axios({
-					url: this.baseUrl + "/home/initPage",
+					url: "/home/initPage",
 					method: "GET",
 				}).then(res => {
-					console.log(res)
 					if (res.data.E_BACKSTATUS == '0') {
 						//已有登录状态  展示个人信息
 						this.user = res.data.user
@@ -175,7 +166,7 @@
 					}
 				}).catch(e => {
 					console.log("网络异常")
-					this.$router.push("/EXAM")
+					this.$router.push("/Login")
 				})
 			},
 			handleOpen(key, keyPath) {
@@ -196,7 +187,7 @@
 					return
 				});
 				this.$axios({
-					url: this.baseUrl + "/access/exitLogin",
+					url: "/access/exitLogin",
 					method: "GET",
 				}).then(res => {
 					console.log(res)
