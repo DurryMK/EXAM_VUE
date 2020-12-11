@@ -26,8 +26,8 @@
 								<el-input v-model="user.mobile"></el-input>
 							</el-form-item>
 							<el-form-item label="实名认证">
-								<el-tag v-show="user.isRname == 1">已实名</el-tag>
-								<el-tag v-show="user.isRname == 0" type="danger">未实名</el-tag>
+								<el-tag style="width: 100%;" v-show="user.isRname == 1">已实名</el-tag>
+								<el-tag style="width: 100%;" v-show="user.isRname == 0" type="danger">未实名</el-tag>
 							</el-form-item>
 							<el-form-item label="QQ">
 								<el-input v-model="user.qq"></el-input>

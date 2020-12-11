@@ -1,22 +1,30 @@
+<style type="text/css">
+	.el-menu-vertical-demo:not(.el-menu--collapse) {
+		width: 200px;
+		min-height: 400px;
+	}
+</style>
 <template>
 	<el-container>
+		<!-- 头部区域 -->
 		<el-header>
 			<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-				<el-menu-item index="100" style="width: 200px;">
+				<el-menu-item index="100">
 					<el-avatar fit="contain" :src="user.imgUrl"></el-avatar>
 					<span style="margin-left: 10px;margin-top: 5px;">{{user.username}}</span>
 				</el-menu-item>
 				<el-menu-item index="101">控制中心</el-menu-item>
 			</el-menu>
 		</el-header>
-		<el-container style="margin-top: 5px;">
+		<el-container style="margin-top: 10px;">
+			<!-- 侧边菜单 ——控制中心 -->
 			<el-aside v-show="asideMenu==101" width="220px">
 				<el-menu class="el-menu-vertical-demo" @select="handleSelectAside">
 					<el-menu-item index="/Make">
 						<i class="el-icon-s-promotion"></i>
 						<span slot="title">由我出卷</span>
 					</el-menu-item>
-					<el-menu-item index="/PaperList">
+					<el-menu-item index="/List">
 						<i class="el-icon-document-copy"></i>
 						<span slot="title">试卷管理</span>
 					</el-menu-item>
@@ -30,13 +38,14 @@
 					</el-menu-item>
 				</el-menu>
 			</el-aside>
+			<!-- 侧边菜单 ——用户信息 -->
 			<el-aside v-show="asideMenu==100" width="220px">
 				<el-menu class="el-menu-vertical-demo" @select="handleSelectAside">
 					<el-menu-item index="/Personal">
 						<i class="el-icon-user"></i>
 						<span slot="title">我的信息</span>
 					</el-menu-item>
-					<el-menu-item index="加入考试" @click="joinHandle(1)">
+					<el-menu-item index="加入考试" @click="joinHandle">
 						<span slot="title"><i class="el-icon-edit-outline"></i>加入考试</span>
 					</el-menu-item>
 					<el-menu-item index="查看成绩">
@@ -53,39 +62,39 @@
 					</el-menu-item>
 				</el-menu>
 			</el-aside>
-			<el-container>
-				<el-main style="height: 680px;">
-					<el-container style="height: 100%;">
-						<el-header style="height: 7%;">
-							<el-tabs v-model="activeTab" type="card" editable @tab-click="selectTab" @edit="handleTabsEdit" @tab-remove="handleTabsClose">
-								<el-tab-pane :key="item.name" v-for="(item, index) in editableTabs" :label="item.title" :name="item.name">
-									{{item.content}}
-								</el-tab-pane>
-							</el-tabs>
-						</el-header>
-						<el-main style="height: 93%;">
-							<router-view></router-view>
-						</el-main>
-					</el-container>
+			<!-- 主体内容 -->
+			<el-container style="height: 800px;">
+				<el-header style="height: 8%;">
+					<el-tabs v-model="activeTab" type="card" editable @tab-click="selectTab" @edit="handleTabsEdit" @tab-remove="handleTabsClose">
+						<el-tab-pane :key="item.name" v-for="(item, index) in editableTabs" :label="item.title" :name="item.name">
+							{{item.content}}
+						</el-tab-pane>
+					</el-tabs>
+				</el-header>
+				<el-main>
+					<router-view></router-view>
 				</el-main>
-				<el-footer>
-					<div>
-						<el-divider></el-divider>
-						<span>©2020-2021 Durry. All rights reserved.</span>
-					</div>
-					<el-dialog title="加入考试" :visible.sync="dialogVisible">
-						<el-form>
-							<el-form-item>
-								<el-input v-model="paperLink" autocomplete="off" placeholder="输入 考试链接/考试编号 进入考试"></el-input>
-							</el-form-item>
-						</el-form>
-						<div slot="footer" class="dialog-footer">
-							<el-button @click="dialogVisible = false">取 消</el-button>
-							<el-button type="primary" @click="joinHandle(2)">确 定</el-button>
-						</div>
-					</el-dialog>
-				</el-footer>
 			</el-container>
+		</el-container>
+		<el-container>
+			<!-- 底部 -->
+			<el-footer>
+				<div>
+					<el-divider></el-divider>
+					<span>©2020-2021 Durry. All rights reserved.</span>
+				</div>
+				<el-dialog title="加入考试" :visible.sync="dialogVisible">
+					<el-form>
+						<el-form-item>
+							<el-input v-model="paperLink" autocomplete="off" placeholder="输入 考试链接/考试编号 进入考试"></el-input>
+						</el-form-item>
+					</el-form>
+					<div slot="footer" class="dialog-footer">
+						<el-button @click="dialogFormVisible = false">取 消</el-button>
+						<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+					</div>
+				</el-dialog>
+			</el-footer>
 		</el-container>
 	</el-container>
 </template>
@@ -94,7 +103,7 @@
 	let tabMap = new Map([
 		['/Make', '新建试卷'],
 		['/Welcome', '欢迎页'],
-		['/PaperList', '试卷列表'],
+		['/List', '试卷列表'],
 		['/Personal', '个人信息'],
 		['/Questionlist', 'EXAM题库'],
 		['/RealName', '实名认证'],
@@ -173,13 +182,8 @@
 					this.$router.push("/Login")
 				})
 			},
-			joinHandle(flag) { //点击加入考试时触发 1打开弹框 2跳转到考试面版
-				if (flag === 1) {
-					this.dialogVisible = true //打开输入框
-					return
-				}
-				this.$router.push("/Core")
-
+			joinHandle() { //点击加入考试时触发
+				this.dialogVisible = true //打开输入框
 			},
 			exitLogin() { //退出登录
 				this.$confirm('将要退出当前账号, 是否继续?', '提示', {
@@ -277,6 +281,3 @@
 		}
 	}
 </script>
-
-<style>
-</style>

@@ -4,31 +4,41 @@
 	</div>
 </template>
 <script>
-	// import Mock from 'mockjs'
-	// //使用mockjs模拟数据
-	// Mock.mock("https://www.mytesttests.com/initPage", {
-	// 	"E_BACKSTATUS": "0", 
-	// });
-	// Mock.mock("https://www.mytesttests.com/home/initPage", {
-	// 	"E_BACKSTATUS": "0", 
-	// 	user: {
-	// 		username: "@name",
-	// 		imgUrl: "./img/yy3.jpg",
-	// 	}
-	// });
-	// Mock.mock("https://www.mytesttests.com/personal/initPage", {
-	// 	"E_BACKSTATUS": "0", 
-	// 	user: {
-	// 		username: "@name",
-	// 		imgUrl: "./img/yy3.jpg",
-	// 		rname:"@name",
-	// 		mobile: "159****6596",
-	// 		qq:"310286339",
-	// 		isRname:'@boolean',
-	// 		school:'北京瞎扯大学',
-	// 		major:'好自为之专业',
-	// 	}
-	// });
+	import Mock from 'mockjs'
+	//使用mockjs模拟数据
+	Mock.mock("https://www.mytesttests.com/app/initPage", {
+		"E_BACKSTATUS": "0", 
+	});
+	Mock.mock("https://www.mytesttests.com/home/initPage", {
+		"E_BACKSTATUS": "0", 
+		user: {
+			username: "@name",
+			imgUrl: "./img/yy3.jpg",
+			isRname:"1"
+		}
+	});
+	Mock.mock("https://www.mytesttests.com/home/personal/initPage", {
+		"E_BACKSTATUS": "0", 
+		E_BACKINFO: {
+			username: "@name",
+			imgUrl: "./img/yy3.jpg",
+			rname:"@name",
+			mobile: "159****6596",
+			qq:"310286339",
+			isRname:'@boolean',
+			school:'北京瞎扯大学',
+			major:'好自为之专业',
+		}
+	});
+	Mock.mock("https://www.mytesttests.com/home/realName", {
+		"E_BACKSTATUS": "-1", 
+		E_BACKINFO: {
+			rname:"吹*皮",
+			idCard: "43*********1252X",
+			mobile: "159****6596",
+			rTime:"2020-12-09"
+		}
+	});
 	export default {
 		name: 'app',
 		components: {},

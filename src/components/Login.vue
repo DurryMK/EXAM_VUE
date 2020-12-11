@@ -337,16 +337,10 @@
 					} else {
 						this.hint("发送验证码失败", "error")
 					}
+				}).catch(e => {
+					this.hint("发送验证码失败","error")
 				})
 			},
-			hint(msg, type) {
-				this.$message({
-					message: msg,
-					type: 20,
-					duration: 900,
-					offset: 25
-				});
-			}
 		}
 	}
 </script>

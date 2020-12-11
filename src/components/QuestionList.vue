@@ -1,68 +1,88 @@
 <template>
-	<el-container style="height: 540px;">
-		<el-table :data="pageInfo.infos" style="width: 100%;" max-height="500">
-			<el-table-column type="expand">
-				<template slot-scope="props">
-					<el-form label-position="left" inline class="demo-table-expand">
-						<el-form-item label="标题:">
-							<span>{{ props.row.title }}</span>
-						</el-form-item>
-						<el-form-item label="内容:">
-							<span>{{ props.row.content }}</span>
-						</el-form-item>
-						<el-form-item label="上传时间:">
-							<span>{{ props.row.time }}</span>
-						</el-form-item>
-						<el-form-item label="类型:">
-							<span>{{ props.row.type }}</span>
-						</el-form-item>
-						<el-form-item label="难度:">
-							<span>{{ props.row.level }}</span>
-						</el-form-item>
-						<el-form-item label="来源:">
-							<span>{{ props.row.from }}</span>
-						</el-form-item>
-						<el-form-item label="查看原题:">
-							<el-link :href="props.row.origin" type="primary">{{props.row.origin}}</el-link>
-						</el-form-item>
-					</el-form>
-				</template>
-			</el-table-column>
-			<el-table-column label="题号" type="index" :index="1" width="80">
-			</el-table-column>
-			<el-table-column label="标题" prop="title" width="350">
-			</el-table-column>
-			<el-table-column prop="level" label="难度" width="100" :filters="[{'text':'算法','value':'算法'},]"
-			 :filter-method="filterLevel" filter-placement="bottom-end">
-				<template slot-scope="scope">
-					<el-tag :type="'danger'" disable-transitions>{{scope.row.level}}</el-tag>
-				</template>
-			</el-table-column>
-			<el-table-column prop="type" label="分类" width="100" :filters="[{'text':'算法','value':'算法'},]"
-			 :filter-method="filterType" filter-placement="bottom-end">
-				<template slot-scope="scope">
-					<el-tag :type="'success'" disable-transitions>{{scope.row.type}}</el-tag>
-				</template>
-			</el-table-column>
-			<el-table-column prop="time" label="创建时间" width="145" :filters="[{'text':'算法','value':'算法'},]"
-			 :filter-method="filterTime" filter-placement="bottom-end">
-				<template slot-scope="scope">
-					<el-tag :type="'primary'" disable-transitions>{{scope.row.time}}</el-tag>
-				</template>
-			</el-table-column>
-			<el-table-column align="right">
-				<template slot="header" slot-scope="scope">
-					<el-input v-model="pageInfo.searchKey" size="mini" style="width: 150px;" placeholder="输入标题/类型搜索" />
-				</template>
-				<template slot-scope="scope">
-					<el-button icon="el-icon-circle-plus" plain type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">Add</el-button>
-				</template>
-			</el-table-column>
-		</el-table>
+	<el-container style="height: 750px;">
+		<el-header style="height: 10%;">
+			<el-divider>EXAM系统题库&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
+		</el-header>
+		<el-main>
+			<el-table :data="pageInfo.infos" style="width: 100%;" :max-height="680" :highlight-current-row="true">
+				<el-table-column type="expand">
+					<template slot-scope="props">
+						<el-form label-position="left" inline class="demo-table-expand">
+							<el-form-item label="标题:">
+								<span>{{ props.row.title }}</span>
+							</el-form-item>
+							<el-form-item label="内容:">
+								<span>{{ props.row.content }}</span>
+							</el-form-item>
+							<el-form-item label="上传时间:">
+								<span>{{ props.row.time }}</span>
+							</el-form-item>
+							<el-form-item label="类型:">
+								<span>{{ props.row.type }}</span>
+							</el-form-item>
+							<el-form-item label="难度:">
+								<span>{{ props.row.level }}</span>
+							</el-form-item>
+							<el-form-item label="来源:">
+								<span>{{ props.row.from }}</span>
+							</el-form-item>
+							<el-form-item label="查看原题:">
+								<el-link :href="props.row.origin" type="primary">{{props.row.origin}}</el-link>
+							</el-form-item>
+						</el-form>
+					</template>
+				</el-table-column>
+				<el-table-column label="题号" type="index" :index="1" width="80">
+				</el-table-column>
+				<el-table-column label="标题" prop="title" width="350">
+				</el-table-column>
+				<el-table-column prop="level" label="难度" width="100" :filters="[{'text':'算法','value':'算法'},]" :filter-method="filterLevel"
+				 filter-placement="bottom-end">
+					<template slot-scope="scope">
+						<el-tag :type="'danger'" disable-transitions>{{scope.row.level}}</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column prop="type" label="分类" width="100" :filters="[{'text':'算法','value':'算法'},]" :filter-method="filterType"
+				 filter-placement="bottom-end">
+					<template slot-scope="scope">
+						<el-tag :type="'success'" disable-transitions>{{scope.row.type}}</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column prop="time" label="创建时间" width="145" :filters="[{'text':'算法','value':'算法'},]" :filter-method="filterTime"
+				 filter-placement="bottom-end">
+					<template slot-scope="scope">
+						<el-tag :type="'primary'" disable-transitions>{{scope.row.time}}</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column align="right">
+					<template slot="header" slot-scope="scope">
+						<el-input v-model="pageInfo.searchKey" size="mini" style="width: 150px;" placeholder="输入标题/类型搜索" />
+					</template>
+					<template slot-scope="scope">
+						<el-button icon="el-icon-circle-plus" plain type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">Add</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</el-main>
 		<el-footer>
 			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageInfo.currentPage"
 			 :page-sizes="pageSizes" :page-size="pageInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageInfo.total">
 			</el-pagination>
+			<!-- 解释说明的提示框 -->
+			<el-dialog title="EXAM题库" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+				<ul>
+					<li>
+						<span>EXAM题库是由系统提供的题库</span>
+					</li>
+					<li>
+						<span>题库内容来自于网络爬取，因此内容将会不定期更新，用户可以自行选择条目添加到个人题库。</span>
+					</li>
+				</ul>
+				<span slot="footer" class="dialog-footer">
+					<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+				</span>
+			</el-dialog>
+
 		</el-footer>
 	</el-container>
 </template>
@@ -72,6 +92,7 @@
 		name: "QuestionList",
 		data() {
 			return {
+				dialogVisible: false,
 				pageSizes: [5, 10, 15, 20, 25],
 				pageInfo: {
 					types: [],
@@ -94,7 +115,10 @@
 			initPage() {
 				this.doQuery()
 			},
-			doQuery() {
+			hintInfo() {
+				this.dialogVisible = true
+			},
+			doQuery() { //提交PageInfo 查询数据
 				this.$axios({
 					url: "/que/genQuestionList",
 					method: "POST",
@@ -103,12 +127,16 @@
 					}
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
+						//返回的数据填充页面
 						this.fullPage(res.data.E_BACKINFO)
-					} else {}
-				}).catch(e => {})
+					} else {
+						this.hint("数据加载失败，请刷新页面重试", "error")
+					}
+				}).catch(e => {
+					this.hint("数据加载失败，请检查网络状态", "error")
+				})
 			},
 			fullPage(data) {
-
 				this.pageInfo = data
 				console.log(this.pageInfo.infos[0].type)
 

@@ -1,53 +1,55 @@
 <template>
-	<el-container style="height: 480px;">
-		<el-table :data="tableData" style="width: 100%;">
-			<el-table-column type="expand">
-				<template slot-scope="props">
-					<el-form label-position="left" inline class="demo-table-expand">
-						<el-form-item label="试卷编号">
-							<span>{{ props.row.id }}</span>
-						</el-form-item>
-						<el-form-item label="试卷标题">
-							<span>{{ props.row.title }}</span>
-						</el-form-item>
-						<el-form-item label="上传时间">
-							<span>{{ props.row.time }}</span>
-						</el-form-item>
-						<el-form-item label="开放时间">
-							<span>{{ props.row.startTime }}</span>
-						</el-form-item>
-						<el-form-item label="结束时间">
-							<span>{{ props.row.endTime }}</span>
-						</el-form-item>
-						<el-form-item label="试卷描述">
-							<span>{{ props.row.mark }}</span>
-						</el-form-item>
-						<el-form-item label="预览">
-							<el-button @click="drawer = true" icon="el-icon-tickets" plain type="primary" size="mini">试卷预览</el-button>
-						</el-form-item>
-					</el-form>
-				</template>
-			</el-table-column>
-			<el-table-column label="试卷编号" prop="id">
-			</el-table-column>
-			<el-table-column label="试卷标题" prop="title">
-			</el-table-column>
-			<el-table-column prop="tag" label="分类" width="100" :filters="filters" :filter-method="filterTag" filter-placement="bottom-end">
-				<template slot-scope="scope">
-					<el-tag :type="scope.row.tag === '家' ? 'primary' : 'success'" disable-transitions>{{scope.row.tag}}</el-tag>
-				</template>
-			</el-table-column>
-			<el-table-column align="right">
-				<template slot="header" slot-scope="scope">
-					<el-input v-model="searchKey" size="mini" style="width: 150px;" placeholder="输入ID/标题搜索" />
-				</template>
-				<template slot-scope="scope">
-					<el-button icon="el-icon-edit" plain type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-					<el-button icon="el-icon-delete-solid" plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-				</template>
-			</el-table-column>
-		</el-table>
-		<el-footer>
+	<el-container style="height: 100%;">
+		<el-main style="height: 90%;">
+			<el-table :data="tableData" :height="450" :highlight-current-row="true">
+				<el-table-column type="expand">
+					<template slot-scope="props">
+						<el-form label-position="left" inline class="demo-table-expand">
+							<el-form-item label="试卷编号">
+								<span>{{ props.row.id }}</span>
+							</el-form-item>
+							<el-form-item label="试卷标题">
+								<span>{{ props.row.title }}</span>
+							</el-form-item>
+							<el-form-item label="上传时间">
+								<span>{{ props.row.time }}</span>
+							</el-form-item>
+							<el-form-item label="开放时间">
+								<span>{{ props.row.startTime }}</span>
+							</el-form-item>
+							<el-form-item label="结束时间">
+								<span>{{ props.row.endTime }}</span>
+							</el-form-item>
+							<el-form-item label="试卷描述">
+								<span>{{ props.row.mark }}</span>
+							</el-form-item>
+							<el-form-item label="预览">
+								<el-button @click="drawer = true" icon="el-icon-tickets" plain type="primary" size="mini">试卷预览</el-button>
+							</el-form-item>
+						</el-form>
+					</template>
+				</el-table-column>
+				<el-table-column label="试卷编号" prop="id">
+				</el-table-column>
+				<el-table-column label="试卷标题" prop="title">
+				</el-table-column>
+				<el-table-column prop="tag" label="分类" width="100" :filters="filters" :filter-method="filterTag" filter-placement="bottom-end">
+					<template slot-scope="scope">
+						<el-tag :type="scope.row.tag === '家' ? 'primary' : 'success'" disable-transitions>{{scope.row.tag}}</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column align="right">
+					<template slot="header" slot-scope="scope">
+						<el-input v-model="searchKey" size="mini" style="width: 150px;" placeholder="输入ID/标题搜索" />
+					</template>
+					<template slot-scope="scope">
+						<el-button icon="el-icon-edit" plain type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+						<el-button icon="el-icon-delete-solid" plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</el-main>
+		<el-footer style="width: 10%;">
 			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
 			 :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
 			</el-pagination>
@@ -60,7 +62,7 @@
 
 <script>
 	export default {
-		name: 'list',
+		name: 'PaperList',
 		data() {
 			const item = {
 				date: '2016-05-02',
@@ -69,7 +71,7 @@
 			};
 			return {
 				drawer: false,
-				searchKey:"",
+				searchKey: "",
 				currentPage1: 5,
 				currentPage2: 5,
 				currentPage3: 5,
