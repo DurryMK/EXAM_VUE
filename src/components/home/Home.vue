@@ -1,54 +1,29 @@
-<style type="text/css">
-	.el-menu-vertical-demo:not(.el-menu--collapse) {
-		width: 200px;
-		min-height: 400px;
-	}
-</style>
 <template>
 	<el-container>
-		<!-- 头部区域 -->
 		<el-header>
 			<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-				<el-menu-item index="100">
+				<el-menu-item index="100" style="width: 200px;">
 					<el-avatar fit="contain" :src="user.imgUrl"></el-avatar>
 					<span style="margin-left: 10px;margin-top: 5px;">{{user.username}}</span>
 				</el-menu-item>
 				<el-menu-item index="101">控制中心</el-menu-item>
 			</el-menu>
 		</el-header>
-		<el-container style="margin-top: 10px;">
-			<!-- 侧边菜单 ——控制中心 -->
-			<el-aside v-show="asideMenu==101" width="220px">
-				<el-menu class="el-menu-vertical-demo" @select="handleSelectAside">
-					<el-menu-item index="/Make">
-						<i class="el-icon-s-promotion"></i>
-						<span slot="title">由我出卷</span>
-					</el-menu-item>
-					<el-menu-item index="/List">
-						<i class="el-icon-document-copy"></i>
-						<span slot="title">试卷管理</span>
-					</el-menu-item>
-					<el-menu-item index="/PersonalQue">
-						<i class="el-icon-menu"></i>
-						<span slot="title">我的题库</span>
-					</el-menu-item>
-					<el-menu-item index="/Questionlist">
-						<i class="el-icon-s-grid"></i>
-						<span slot="title">EXAM题库</span>
-					</el-menu-item>
-				</el-menu>
-			</el-aside>
-			<!-- 侧边菜单 ——用户信息 -->
+		<el-container style="margin-top: 5px;">
 			<el-aside v-show="asideMenu==100" width="220px">
-				<el-menu class="el-menu-vertical-demo" @select="handleSelectAside">
+				<el-menu style="height: 95%;" class="el-menu-vertical-demo" @select="handleSelectAside">
 					<el-menu-item index="/Personal">
 						<i class="el-icon-user"></i>
 						<span slot="title">我的信息</span>
 					</el-menu-item>
-					<el-menu-item index="加入考试" @click="joinHandle">
+					<el-menu-item index="加入考试" @click="joinHandle(1)">
 						<span slot="title"><i class="el-icon-edit-outline"></i>加入考试</span>
 					</el-menu-item>
-					<el-menu-item index="查看成绩">
+					<el-menu-item index="/Memeber">
+						<i class="el-icon-more"></i>
+						<span slot="title">我的组员</span>
+					</el-menu-item>
+					<el-menu-item index="/ScoreView">
 						<i class="el-icon-s-claim"></i>
 						<span slot="title">查看成绩</span>
 					</el-menu-item>
@@ -62,53 +37,81 @@
 					</el-menu-item>
 				</el-menu>
 			</el-aside>
-			<!-- 主体内容 -->
-			<el-container style="height: 800px;">
-				<el-header style="height: 8%;">
-					<el-tabs v-model="activeTab" type="card" editable @tab-click="selectTab" @edit="handleTabsEdit" @tab-remove="handleTabsClose">
-						<el-tab-pane :key="item.name" v-for="(item, index) in editableTabs" :label="item.title" :name="item.name">
-							{{item.content}}
-						</el-tab-pane>
-					</el-tabs>
-				</el-header>
-				<el-main>
-					<router-view></router-view>
+			<el-aside v-show="asideMenu==101" width="220px">
+				<el-menu style="height: 95%;" class="el-menu-vertical-demo" @select="handleSelectAside">
+					<el-menu-item index="/Make">
+						<i class="el-icon-s-promotion"></i>
+						<span slot="title">由我出卷</span>
+					</el-menu-item>
+					<el-menu-item index="/PaperList">
+						<i class="el-icon-document-copy"></i>
+						<span slot="title">试卷管理</span>
+					</el-menu-item>
+					<el-menu-item index="/Analysis">
+						<i class="el-icon-s-marketing"></i>
+						<span slot="title">数据分析</span>
+					</el-menu-item>
+					<el-menu-item index="/PersonalQue">
+						<i class="el-icon-menu"></i>
+						<span slot="title">我的题库</span>
+					</el-menu-item>
+					<el-menu-item index="/Questionlist">
+						<i class="el-icon-s-grid"></i>
+						<span slot="title">EXAM题库</span>
+					</el-menu-item>
+				</el-menu>
+			</el-aside>
+			<el-container>
+				<el-main style="height: 700px;padding: 5px;">
+					<el-container style="height: 100%;padding: 0px;">
+						<el-header style="height: 5%;">
+							<el-tabs v-model="activeTab" type="card" editable @tab-click="selectTab" @edit="handleTabsEdit" @tab-remove="handleTabsClose">
+								<el-tab-pane :key="item.name" v-for="(item, index) in editableTabs" :label="item.title" :name="item.name">
+									{{item.content}}
+								</el-tab-pane>
+							</el-tabs>
+						</el-header>
+						<el-main style="height: 95%;padding: 10px;">
+							<router-view></router-view>
+						</el-main>
+					</el-container>
 				</el-main>
-			</el-container>
-		</el-container>
-		<el-container>
-			<!-- 底部 -->
-			<el-footer>
-				<div>
-					<el-divider></el-divider>
-					<span>©2020-2021 Durry. All rights reserved.</span>
-				</div>
-				<el-dialog title="加入考试" :visible.sync="dialogVisible">
-					<el-form>
-						<el-form-item>
-							<el-input v-model="paperLink" autocomplete="off" placeholder="输入 考试链接/考试编号 进入考试"></el-input>
-						</el-form-item>
-					</el-form>
-					<div slot="footer" class="dialog-footer">
-						<el-button @click="dialogFormVisible = false">取 消</el-button>
-						<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+				<el-footer>
+					<div>
+						<el-divider></el-divider>
+						<span>©2020-2021 Durry. All rights reserved.</span>
 					</div>
-				</el-dialog>
-			</el-footer>
+					<el-dialog title="加入考试" :visible.sync="dialogVisible">
+						<el-form>
+							<el-form-item>
+								<el-input v-model="paperLink" autocomplete="off" placeholder="输入 考试链接/考试编号 进入考试"></el-input>
+							</el-form-item>
+						</el-form>
+						<div slot="footer" class="dialog-footer">
+							<el-button @click="dialogVisible = false">取 消</el-button>
+							<el-button type="primary" @click="joinHandle(2)">确 定</el-button>
+						</div>
+					</el-dialog>
+				</el-footer>
+			</el-container>
 		</el-container>
 	</el-container>
 </template>
 
 <script>
+	//标签卡与router-view的注册表
 	let tabMap = new Map([
 		['/Make', '新建试卷'],
 		['/Welcome', '欢迎页'],
-		['/List', '试卷列表'],
+		['/PaperList', '试卷列表'],
 		['/Personal', '个人信息'],
 		['/Questionlist', 'EXAM题库'],
 		['/RealName', '实名认证'],
-		['/PersonalQue', '我的题库']
-	]) //标签卡与router-view的对应关系
+		['/PersonalQue', '我的题库'],
+		['/Analysis', '数据分析'],
+		['/Memeber', '成员列表'],
+		['/ScoreView', '我的成绩'],
+	])
 
 	export default {
 		name: 'home',
@@ -134,7 +137,16 @@
 				tabIndex: 1,
 
 				//用户信息
-				user: [],
+				user: new Object(),
+
+				//Setting组件中的数据
+				setting: { //基础设置
+					title: '',
+					type: '0',
+					remark: '',
+					level: 2,
+					code: null, //试卷编码
+				},
 			};
 		},
 		created() {
@@ -173,17 +185,21 @@
 					method: "GET",
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
-						this.user = res.data.user //已有登录状态  展示个人信息
+						this.user = res.data.E_BACKINFO //已有登录状态  展示个人信息
 					} else {
 						this.$router.push("/Login") //未登录 跳转到登录界面
 					}
 				}).catch(e => {
-					console.log("网络异常")
 					this.$router.push("/Login")
 				})
 			},
-			joinHandle() { //点击加入考试时触发
-				this.dialogVisible = true //打开输入框
+			joinHandle(flag) { //点击加入考试时触发 1打开弹框 2跳转到考试面版
+				if (flag === 1) {
+					this.dialogVisible = true //打开输入框
+					return
+				}
+				this.$router.push("/Core")
+
 			},
 			exitLogin() { //退出登录
 				this.$confirm('将要退出当前账号, 是否继续?', '提示', {
@@ -201,14 +217,12 @@
 				}).catch(() => {
 					return
 				});
-
 			},
 			handleSelectAside(key) { //选中侧边导航栏时 新增标签卡 并定位到新标签卡 并使路由指向标签卡对应的地址
 				if (!tabMap.has(key)) {
 					return
 				}
 				this.$router.push(key) //1.跳转到对应的路由地址
-				console.log(this.hasTab(key))
 				if (this.hasTab(key)) { //2.判断标签卡是否已存在
 					this.activeTab = key //2.1标签卡已经打开则跳转到对应的标签卡
 					this.preTab = key
@@ -229,7 +243,9 @@
 				this.preTab = this.activeTab
 				this.$router.push(this.activeTab) //3.点击新的标签卡 跳转到对应路由
 			},
-			handleTabsClose(data) {},
+			handleTabsClose(data) {
+				return false
+			},
 			handleTabsEdit(targetName, action) {
 				if (action === 'add') {
 					// let newTabName = ++this.tabIndex + '';
@@ -281,3 +297,6 @@
 		}
 	}
 </script>
+
+<style>
+</style>

@@ -40,8 +40,12 @@
 							</el-form-item>
 						</el-form>
 						<el-divider></el-divider>
-						<el-button icon="el-icon-refresh-right" circle></el-button>
-						<el-button type="primary" icon="el-icon-s-management" circle></el-button>
+						<el-tooltip class="item" effect="dark" content="刷新" placement="left-end">
+							<el-button icon="el-icon-refresh-right" circle @click="refreshHandle"></el-button>
+						</el-tooltip>
+						<el-tooltip class="item" effect="dark" content="保存" placement="right-start">
+							<el-button type="primary" icon="el-icon-s-management" @click="saveHandle" circle></el-button>
+						</el-tooltip>
 					</el-card>
 				</el-col>
 			</el-row>
@@ -65,7 +69,7 @@
 		methods: {
 			initPage() {
 				this.$axios({
-					url:  "/home/personal/initPage",
+					url: "/home/personal/initPage",
 					method: "GET",
 				}).then(res => {
 					console.log(res)
@@ -84,6 +88,33 @@
 			},
 			fullPage() {
 
+			},
+			refreshHandle() {
+				this.$confirm('刷新页面后未保存的信息将丢失, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(()=>{
+					this.initPage()
+				}
+				).catch(() => {
+					return
+				});
+			},
+			saveHandle(){
+				this.$confirm('是否保存?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(()=>{
+					this.saveOp()
+				}
+				).catch(() => {
+					return
+				});
+			},
+			saveOp(){
+				console.log(this.user)
 			}
 		}
 	}

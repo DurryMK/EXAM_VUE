@@ -1,9 +1,7 @@
 <template>
 	<el-container style="height: 750px;">
-		<el-header style="height: 10%;">
-			<el-divider>EXAM系统题库&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
-		</el-header>
 		<el-main>
+			<el-divider>EXAM系统题库&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
 			<el-table :data="pageInfo.infos" style="width: 100%;" :max-height="680" :highlight-current-row="true">
 				<el-table-column type="expand">
 					<template slot-scope="props">
