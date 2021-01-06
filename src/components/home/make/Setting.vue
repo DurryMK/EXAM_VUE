@@ -42,8 +42,10 @@
 		name: 'Setting',
 		mounted() {
 			this.initPage()
-			//获取用户拥有的类型列表
-			this.getUserTypeList()
+			//每次新建试卷时，生成一个唯一编码
+			if(this.setting.code == null || this.setting.code == ''){
+				this.setting.code = this.getUUID()
+			}
 		},
 		data() {
 			return {
@@ -51,16 +53,14 @@
 					id: '0',
 					name: '默认'
 				}],
-				setting: this.$store.state.setting
+				setting: this.$store.state.make.setting
 			}
 		},
 		created() {
 		},
 		methods: {
-			initPage() {
-				
-			},
-			getUserTypeList(){
+			initPage(){
+				//获取用户拥有的类型列表
 				this.$axios({
 					url:'/make/info/getUserTypeList',
 					method:'GET'

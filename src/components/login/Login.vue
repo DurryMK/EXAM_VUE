@@ -2,7 +2,7 @@
 	<el-container>
 		<el-header>
 			<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
-				<el-menu-item index="1"><span style="color:#6666FF">登录 | EXAM考试平台</span></el-menu-item>
+				<el-menu-item index="1"><span style="color:#6666FF">登录 | INTELLIE考试平台</span></el-menu-item>
 			</el-menu>
 		</el-header>
 		<el-main>
@@ -24,7 +24,7 @@
 					<el-card v-show="activeLogin==1" shadow="always" style="margin-top: 20px;height: 300px;">
 						<el-row>
 							<el-col :span="15" :offset="3">
-								<el-form ref="quickForm" :rules="quick_rules" :model="quickForm" label-width="80px" style="margin-top: 10px;">
+								<el-form ref="quickForm" status-icon :rules="quick_rules" :model="quickForm" label-width="80px" style="margin-top: 10px;">
 									<el-form-item prop="mobile">
 										<el-col :span="3">
 											<i class="el-icon-phone"></i>
@@ -45,14 +45,17 @@
 										</el-col>
 									</el-form-item>
 									<el-form-item>
-										<el-button type="success" style="width: 90%;margin-left: 10%;" @click="quickLogin">快速登录</el-button>
+										<el-button type="success" style="width: 90%;margin-left: 10%;" @click="quickLogin('quickForm')">快速登录</el-button>
+									</el-form-item>
+									<el-form-item>
+										<el-button @click="toReg" type="text" style="margin-left: 2px;"><span style="font-size: 10px;">去注册</span></el-button>
 									</el-form-item>
 								</el-form>
 							</el-col>
 						</el-row>
 					</el-card>
 					<!-- 登录卡片 -->
-					<el-card v-show="activeLogin==2" shadow="always" style="margin-top: 20px;">
+					<el-card v-show="activeLogin==2" status-icon shadow="always" style="margin-top: 20px;">
 						<el-row>
 							<el-col :span="12" :offset="4">
 								<el-form ref="loginForm" :rules="login_rules" :model="loginForm" label-width="80px" style="margin-top: 10px;">
@@ -76,6 +79,7 @@
 										<el-button type="danger" style="width: 90%;margin-left: 10%;" @click="doLogin()">立即登录</el-button>
 									</el-form-item>
 									<el-form-item>
+										<el-button @click="toReg" type="text" style="margin-left: 2px;"><span style="font-size: 10px;">去注册</span></el-button>
 										<el-button type="text" style="margin-left: 2px;"><span style="font-size: 10px;">忘记密码</span></el-button>
 									</el-form-item>
 								</el-form>
@@ -85,8 +89,8 @@
 					<!-- 注册卡片 -->
 					<el-card v-show="activeLogin==3" shadow="always" style="margin-top: 20px;">
 						<el-row>
-							<el-col :span="12" :offset="4">
-								<el-form ref="regForm" :rules="reg_rules" :model="regForm" label-width="80px" style="margin-top: 10px;">
+							<el-col :span="15" :offset="2">
+								<el-form ref="regForm" status-icon :rules="reg_rules" :model="regForm" label-width="80px" style="margin-top: 10px;">
 									<el-form-item prop="mobile">
 										<el-col :span="3">
 											<i class="el-icon-phone"></i>
@@ -115,11 +119,17 @@
 										</el-col>
 									</el-form-item>
 									<el-form-item prop="check">
-										<el-checkbox v-model="regForm.checked"><span style="font-size: 10px">注册即表示同意EXAM考试平台各种乱七八糟的条约<i class="el-icon-question"
+										<el-button @click="dialogVisible = true" size="mini" type="text" style="margin-left: 2px;">
+											<span style="font-size: 10px;">一堆乱七八糟的协议</span>
+										</el-button>
+										<el-checkbox v-model="regForm.checked"><span style="font-size: 10px">注册即表示同意INTELLIE考试平台各种乱七八糟的条约<i class="el-icon-question"
 												 style=";margin-left: 3px;"></i></span></el-checkbox>
 									</el-form-item>
 									<el-form-item>
 										<el-button type="primary" style="width: 90%;margin-left: 10%;" @click="doReg">立即注册</el-button>
+									</el-form-item>
+									<el-form-item>
+										<el-button @click="toLogin" type="text" style="margin-left: 2px;"><span style="font-size: 10px;">去登录</span></el-button>
 									</el-form-item>
 								</el-form>
 							</el-col>
@@ -134,6 +144,13 @@
 				<el-divider></el-divider>
 				<span>©2020-2021 Durry. All rights reserved.</span>
 			</div>
+			<el-dialog title="你不会看的用户隐私协议" :visible.sync="dialogVisible" width="45%">
+				<span>你不会看的用户隐私协议</span>
+				<span slot="footer" class="dialog-footer">
+					<el-button @click="dialogVisible = false">我看不懂</el-button>
+					<el-button type="primary" @click="dialogVisible = false">我知道了</el-button>
+				</span>
+			</el-dialog>
 		</el-footer>
 	</el-container>
 </template>
@@ -142,6 +159,7 @@
 	export default {
 		name: 'login',
 		data() {
+			//手机号校验规则
 			var checkPhone = (rule, value, callback) => {
 				if (this.activeLogin == 1 || this.activeLogin == 3) {
 					if (!value) {
@@ -153,6 +171,7 @@
 					}
 				}
 			}
+			//验证码校验规则
 			var checkVcode = (rule, value, callback) => {
 				if (this.activeLogin == 1 || this.activeLogin == 3) {
 					if (value === '') {
@@ -163,6 +182,7 @@
 					}
 				}
 			}
+			//用户名校验规则
 			var checkUsername = (rule, value, callback) => {
 				if (this.activeLogin == 2) {
 					if (value === '') {
@@ -170,6 +190,7 @@
 					}
 				}
 			}
+			//密码校验规则
 			var checkPwd = (rule, value, callback) => {
 				if (this.activeLogin == 2 || this.activeLogin == 3) {
 					if (value === '') {
@@ -180,6 +201,7 @@
 					}
 				}
 			}
+			//协议校验规则
 			var checkCheck = (rule, value, callback) => {
 				if (this.activeLogin == 3) {
 					if (!value) {
@@ -192,6 +214,7 @@
 				activeLogin: 1,
 				quick_loading: false,
 				reg_loading: false,
+				dialogVisible: false,
 				quickForm: {
 					mobile: "15974076596",
 					vcode: "",
@@ -246,8 +269,7 @@
 				},
 			}
 		},
-		mounted() {
-		},
+		mounted() {},
 		methods: {
 			handleSelect(key, keyPath) {
 				console.log(key, keyPath);
@@ -255,21 +277,34 @@
 			handleClickTop(flag) {
 				this.activeLogin = flag
 			},
+			//跳到注册界面
+			toReg() {
+				this.activeLogin = 3
+			},
+			//跳到登录界面
+			toLogin() {
+				this.activeLogin = 1
+			},
 			//快速登录
-			quickLogin() {
-				//验证
-				this.$refs['quickForm'].validate((valid) => {
-					if (!valid) {
-						return
+			quickLogin(formName) {
+				this.$refs[formName].validate(function(boolean,object){
+					console.log(boolean)
+					if (boolean) {
+						alert('submit!');
+					} else {
+						console.log('error submit!!');
+						return false;
 					}
-				})
+				});
 				this.$axios({
-					url:  "/access/quickLogin",
+					url: "/access/quickLogin",
 					method: "POST",
 					params: this.quickForm
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
-						this.hint(res.data.E_BACKINFO, "success")
+						this.hint("登录成功", "success")
+						//公钥保存到store
+						this.$store.commit('savePrivateKey', res.data.E_BACKINFO)
 						//1秒后跳转主页面
 						let _this = this
 						setTimeout(function() {
@@ -280,6 +315,7 @@
 					}
 				})
 			},
+			//用户名密码登录
 			doLogin() {
 				//验证
 				this.$refs['loginForm'].validate((valid) => {
@@ -288,7 +324,7 @@
 					}
 				})
 				this.$axios({
-					url:  "/doLogin",
+					url: "/doLogin",
 					method: "POST",
 					params: this.loginForm
 				}).then(res => {
@@ -299,6 +335,7 @@
 					}
 				})
 			},
+			//注册
 			doReg() {
 				//验证
 				this.$refs['regForm'].validate((valid) => {
@@ -307,7 +344,7 @@
 					}
 				})
 				this.$axios({
-					url:  "/doLogin",
+					url: "/doLogin",
 					method: "POST",
 					params: this.regForm
 				}).then(res => {
@@ -319,13 +356,13 @@
 				})
 			},
 			toHome() {
-				this.$router.push("/EXAM")
+				this.$router.push("/INTELLIE")
 			},
 			sendVcode(flag) {
 				this.quick_loading = (flag == 1) ? true : false
 				var mobile = (flag == 1) ? this.quickForm.mobile : this.regForm.mobile
 				this.$axios({
-					url:  "/svode/sendLoginVcode",
+					url: "/svode/sendLoginVcode",
 					method: "get",
 					params: {
 						mobile: mobile
@@ -338,7 +375,7 @@
 						this.hint("发送验证码失败", "error")
 					}
 				}).catch(e => {
-					this.hint("发送验证码失败","error")
+					this.hint("发送验证码失败", "error")
 				})
 			},
 		}

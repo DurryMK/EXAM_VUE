@@ -1,7 +1,7 @@
 <template>
 	<el-container style="height: 750px;">
 		<el-main>
-			<el-divider>EXAM系统题库&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
+			<el-divider>INTELLIE系统题库&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
 			<el-table :data="pageInfo.infos" style="width: 100%;" :max-height="680" :highlight-current-row="true">
 				<el-table-column type="expand">
 					<template slot-scope="props">
@@ -67,10 +67,10 @@
 			 :page-sizes="pageSizes" :page-size="pageInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageInfo.total">
 			</el-pagination>
 			<!-- 解释说明的提示框 -->
-			<el-dialog title="EXAM题库" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+			<el-dialog title="INTELLIE题库" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
 				<ul>
 					<li>
-						<span>EXAM题库是由系统提供的题库</span>
+						<span>INTELLIE题库是由系统提供的题库</span>
 					</li>
 					<li>
 						<span>题库内容来自于网络爬取，因此内容将会不定期更新，用户可以自行选择条目添加到个人题库。</span>

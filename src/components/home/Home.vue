@@ -57,7 +57,7 @@
 					</el-menu-item>
 					<el-menu-item index="/Questionlist">
 						<i class="el-icon-s-grid"></i>
-						<span slot="title">EXAM题库</span>
+						<span slot="title">INTELLIE题库</span>
 					</el-menu-item>
 				</el-menu>
 			</el-aside>
@@ -99,20 +99,19 @@
 </template>
 
 <script>
-	//标签卡与router-view的注册表
-	let tabMap = new Map([
+	//路由与tab页的映射关系
+	var tabMap = new Map([
 		['/Make', '新建试卷'],
 		['/Welcome', '欢迎页'],
 		['/PaperList', '试卷列表'],
 		['/Personal', '个人信息'],
-		['/Questionlist', 'EXAM题库'],
+		['/Questionlist', 'INTELLIE题库'],
 		['/RealName', '实名认证'],
 		['/PersonalQue', '我的题库'],
 		['/Analysis', '数据分析'],
 		['/Memeber', '成员列表'],
 		['/ScoreView', '我的成绩'],
 	])
-
 	export default {
 		name: 'home',
 		props: {
@@ -212,7 +211,7 @@
 						method: "GET",
 					}).then(res => {}).catch(e => {
 						console.log("网络异常")
-						this.$router.push("/EXAM")
+						this.$router.push("/INTELLIE")
 					})
 				}).catch(() => {
 					return
@@ -244,7 +243,9 @@
 				this.$router.push(this.activeTab) //3.点击新的标签卡 跳转到对应路由
 			},
 			handleTabsClose(data) {
-				return false
+				if (data == '/Make') {
+					this.$store.commit('initMakeInfo')
+				}
 			},
 			handleTabsEdit(targetName, action) {
 				if (action === 'add') {

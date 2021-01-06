@@ -63,7 +63,7 @@ const routes = [{
 		name: 'Loading', //过渡组件，
 		component: Loading //对应的组件模板
 	}, {
-		path: '/EXAM',
+		path: '/INTELLIE',
 		name: 'Home', //主页面，
 		component: Home, //对应的组件模板
 		children: [{

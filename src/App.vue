@@ -1,12 +1,16 @@
 <template>
 	<div id="app">
 		<router-view></router-view>
+		<!-- <test></test> -->
 	</div>
 </template>
 <script>
+	import test from './components/test.vue'
 	export default {
 		name: 'app',
-		components: {},
+		components: {
+			test,
+		},
 		data() {
 			return {}
 		},
@@ -14,22 +18,29 @@
 			this.$router.push("/Loading")
 			//初始化页面  调用登录方法
 			this.initPage()
+			//页面刷新时，将store保存到本地仓库 避免刷新页面后数据重置
+			window.addEventListener('unload', this.saveState)
 		},
 		methods: {
+			saveState() {
+				sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+			},
 			initPage() {
 				this.$axios({
 					url: "/app/initPage",
 					method: "GET",
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
+						//公钥保存到store
+						this.$store.commit('savePrivateKey', res.data.E_BACKINFO)
 						//1.已有登录状态  直接跳转个人页面
-						this.$router.push("/EXAM")
+						this.$router.push("/INTELLIE")
 					} else {
 						//2.未登录 解析Cookie进行自动登录
 						this.autoLogin()
 					}
 				}).catch(e => {
-					console.log(e)
+					this.hint("网络异常","error")
 					this.$router.push("/Login")
 				})
 			},
@@ -39,13 +50,16 @@
 					method: "GET",
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
+						//公钥保存到store
+						this.$store.commit('savePrivateKey', res.data.E_BACKINFO)
 						//成功登录
-						this.$router.push("/EXAM")
+						this.$router.push("/INTELLIE")
 					} else {
 						//自动登录失败 跳转到登录界面
 						this.$router.push("/Login")
 					}
 				}).catch(e => {
+					this.hint("网络异常","error")
 					this.$router.push("/Login")
 				})
 			},

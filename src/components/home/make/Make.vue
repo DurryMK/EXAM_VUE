@@ -48,7 +48,7 @@
 		</el-main>
 		<el-footer style="height: 10%;">
 			<el-button plain round type="warning" style="width: 25%;margin-top: 5px;" v-show="active>0" @click="toStep(-1)">上一步</el-button>
-			<el-button plain round type="warning" style="width: 25%;margin-top: 5px;" v-show="active<3" @click="stepHandle(1)">下一步</el-button>
+			<el-button plain round type="warning" style="width: 25%;margin-top: 5px;" v-show="active<3" @click="stepHandle(1)">保存并进入下一步</el-button>
 		</el-footer>
 		<!-- 说明文字的弹框 -->
 		<el-dialog title="说明" :visible.sync="dialogMark" width="80%">
@@ -92,7 +92,7 @@
 	import Upload from './Upload.vue'
 	import Invigilate from './Invigilate.vue'
 	import Setting from './Setting.vue'
-	
+
 	export default {
 		name: 'make',
 		props: {},
@@ -117,10 +117,10 @@
 				questions: [],
 			};
 		},
-		created() {
-			
-		},
+		created() {},
 		mounted() {
+			//每次加载页面时 从数据中心获取当前执行的步骤
+			this.active = this.$store.state.make.step
 			this.initPage()
 		},
 		methods: {
@@ -128,10 +128,10 @@
 			stepHandle(i) { //跳转步骤时对当前页面内容做校验
 				switch (this.active) {
 					case 0:
-						this.makeFirstStep(i) //第一步保存设置
+						this.makeFirstStep(i) //第一步保存基础设置
 						break;
 					case 1:
-						this.makeSecondStep(i) //第二步保存反作弊设置
+						this.makeSecondStep(i) //第二步保存属性设置
 						break;
 					default:
 						break;
@@ -152,7 +152,7 @@
 						//跳到下一步
 						this.toStep(i)
 						//提交到store
-						this.$store.commit('saveCurrSetting',setting)
+						this.$store.commit('saveCurrSetting', setting)
 					} else {
 						this.hint(res.data.E_BACKINFO, 'warning')
 					}
@@ -160,13 +160,36 @@
 					this.hint("网络异常，请稍后再试", 'error')
 				})
 			},
-			makeSecondStep() {
+			makeSecondStep(i) {
 				//通过ref获取子组件的参数
-				console.log(this.$refs.invigilateData.getInvigolateDate())
+				var _invi = {}
+				_invi = this.$refs.invigilateData.getInvigolateDate()
+				if (_invi == null) return
+				//此操作为了解决一个很蛇皮的问题 不可省略
+				var scope = _invi.scope
+				_invi.scope = ''
+				this.$axios({ //保存属性设置信息
+					url: '/make/makeSecondStep',
+					method: 'POST',
+					params: _invi
+				}).then(res => {
+					if (res.data.E_BACKSTATUS == '0') {
+						//保存试卷设置成功
+						this.hint(res.data.E_BACKINFO, 'success')
+						//跳到下一步
+						this.toStep(i)
+						_invi.scope = scope
+					} else {
+						this.hint(res.data.E_BACKINFO, 'warning')
+					}
+				}).catch(e => {
+					this.hint("网络异常，请稍后再试", 'error')
+				})
 			},
 			toStep(i) { //跳转步骤
 				if (this.active + i > 3 || this.active + i < 0) return
 				this.active += i
+				this.$store.commit('saveMakeStep', this.active)
 			},
 		},
 	}

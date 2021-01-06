@@ -3,7 +3,7 @@
 		<el-aside width="200px">
 			<el-row class="tac">
 				<el-col :span="24">
-					<el-menu style="height: 95%;" default-active="activeIndex" class="el-menu-vertical-demo" @select="handleSelect">
+					<el-menu style="height: 95%;" default-active="invigilate.activeIndex" class="el-menu-vertical-demo" @select="handleSelect">
 						<el-menu-item index="1">
 							<i class="el-icon-menu"></i>
 							<span slot="title">权限设置</span>
@@ -22,16 +22,16 @@
 		</el-aside>
 		<el-main>
 			<!-- 权限设置 -->
-			<el-col :span="24" v-show="activeIndex == 1">
+			<el-col :span="24" v-show="invigilate.activeIndex == 1">
 				<el-form ref="form" :model="invigilate" label-width="160px" label-position="left">
-					<el-form-item label="是否限时开放">
-						<el-col :span="2">
+					<el-form-item label="是否永久开放">
+						<el-col :span="1">
 							<el-switch v-model="invigilate.isOpenForever">
 							</el-switch>
 						</el-col>
-						<el-col :span="20" v-show="!invigilate.isOpenForever">
-							<el-date-picker v-model="scope" type="datetimerange" align="right" start-placeholder="开始日期" end-placeholder="结束日期"
-							 :default-time="['12:00:00', '08:00:00']">
+						<el-col :offset="2" :span="15" v-show="!invigilate.isOpenForever">
+							<el-date-picker v-model="invigilate.scope" type="datetimerange" align="right" start-placeholder="开始日期"
+							 end-placeholder="结束日期" :default-time="['12:00:00', '08:00:00']">
 							</el-date-picker>
 						</el-col>
 					</el-form-item>
@@ -54,7 +54,7 @@
 				</el-form>
 			</el-col>
 			<!-- 反作弊设置 -->
-			<el-col :span="24" v-show="activeIndex == 2">
+			<el-col :span="24" v-show="invigilate.activeIndex == 2">
 				<el-form ref="form" :model="invigilate" label-width="160px" label-position="left">
 					<el-form-item label="允许切屏次数">
 						<el-col :span="8">
@@ -104,7 +104,7 @@
 				</el-form>
 			</el-col>
 			<!-- 评卷设置 -->
-			<el-col :span="24" v-show="activeIndex == 3">
+			<el-col :span="24" v-show="invigilate.activeIndex == 3">
 				<el-form ref="form" :model="invigilate" label-width="160px" label-position="left">
 					<el-form-item label="对及格考生的评语">
 						<el-input type="textarea" placeholder="请输入内容" v-model="invigilate.passMark" maxlength="200" show-word-limit>
@@ -125,6 +125,8 @@
 </template>
 
 <script>
+	import jutils from 'jutils-src'
+	import {mapState} from 'vuex'
 	export default {
 		name: 'Invigilate',
 		mounted() {
@@ -132,48 +134,26 @@
 		},
 		data() {
 			return {
-				activeIndex: 1,
-				scope: null, //试卷时间范围
-				invigilate: {
-					isOpenForever: true, //是否永久开放
-					start: null, //试卷开放时间
-					end: null, //试卷开放结束时间
-					join: 1, //允许考试次数
-					delivery: false, //考试是否限时
-					duration: null, //限时时长
-					submit: '1', //是否允许随时交卷
-
-					isRname: false, //仅允许实名考生参加
-					isDoRame: false, //考前进行人脸识别
-					isCopy: false, //是否允许复制试卷内容
-					isPaste: false, //是否允许在试卷粘贴
-					isCamera: false, //是否开启摄像头监考
-					page: 0, //允许切屏次数
-					leave: 0, //允许离开摄像头界面的次数
-
-					passMark: '恭喜过关，再接再厉', //试卷评语
-					noMark: '别灰心，下次加油', //试卷评语
-					isShowResult: '1',
-				},
 				restaurants: null,
 			}
+		},
+		computed:{
+			...mapState({
+				invigilate:state=>state.make.invigilate
+			})
 		},
 		methods: {
 			getInvigolateDate() { //此方法用于处理本页面的数据 ， 并反馈到父组件
 				let data = this.invigilate
-				let scope = this.scope
-				if (!data.isOpenForever && scope == null) { //选择了限时 但没选择时间范围
+				let scope = this.invigilate.scope
+				if (!data.isOpenForever && (scope == null || scope == '')) { //选择了限时 但没选择时间范围
 					this.hint("请选择一个试卷开放的时间范围", 'warning')
-					return
+					return null
 				}
 				//如果选择了限时开放 对起始时间做格式处理
 				if (!data.isOpenForever) {
-					let start = new Date(scope[0])
-					let end = new Date(scope[1])
-					data.start = start.getFullYear() + "-" + (start.getMonth() + 1) + "-" + start.getDay() + "-" + start.getHours() +
-						"-" + start.getMinutes() + "-" + start.getSeconds()
-					data.end = end.getFullYear() + "-" + (end.getMonth() + 1) + "-" + end.getDay() + "-" + end.getHours() + "-" + end.getMinutes() +
-						"-" + end.getSeconds()
+					data.start = jutils.formatDate(new Date(scope[0]), "YYYY-MM-DD HH:ii:ss");
+					data.end = jutils.formatDate(new Date(scope[1]), "YYYY-MM-DD HH:ii:ss");
 				}
 				//如果选择了限时考试 对考试时间做格式判断
 				if (data.delivery) {
@@ -184,18 +164,20 @@
 						//单场考试时间不超过24小时
 						if (duration > 1440) {
 							this.hint("试卷考试时长过长", 'warning')
-							return
+							return null
 						}
 					} else {
 						this.hint("考试时长格式错误", 'error')
-						return
+						return null
 					}
 					data.duration = duration
 				}
+				//提交到store
+				this.$store.commit('saveCurrinvigilate',data)
 				return data
 			},
 			handleSelect(key, keyPath) { //导航菜单被选中时触发
-				this.activeIndex = key
+				this.invigilate.activeIndex = key
 			},
 			loadAll() {
 				return [{

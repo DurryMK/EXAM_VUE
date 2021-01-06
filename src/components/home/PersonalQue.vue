@@ -70,7 +70,7 @@
 			<el-dialog title="个人题库" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
 				<ul>
 					<li>
-						<span>EXAM题库是由系统提供的题库</span>
+						<span>INTELLIE题库是由系统提供的题库</span>
 					</li>
 					<li>
 						<span>题库内容来自于网络爬取，因此内容将会不定期更新，用户可以自行选择条目添加到个人题库。</span>
