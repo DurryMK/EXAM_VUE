@@ -41,7 +41,7 @@
 					}
 				}).catch(e => {
 					this.hint("网络异常","error")
-					this.$router.push("/Login")
+					this.$router.push("/Error")
 				})
 			},
 			autoLogin() {
@@ -60,7 +60,7 @@
 					}
 				}).catch(e => {
 					this.hint("网络异常","error")
-					this.$router.push("/Login")
+					this.$router.push("/Error")
 				})
 			},
 		}

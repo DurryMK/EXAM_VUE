@@ -35,6 +35,9 @@
 							</el-date-picker>
 						</el-col>
 					</el-form-item>
+					<el-form-item label="是否允许所有人查看" style="width: 20%;">
+						<el-switch v-model="invigilate.presonal"></el-switch>
+					</el-form-item>
 					<el-form-item label="考试是否限时" style="width: 20%;">
 						<el-switch v-model="invigilate.delivery"></el-switch>
 					</el-form-item>

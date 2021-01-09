@@ -63,7 +63,7 @@
 					<template slot="header" slot-scope="scope">
 						<el-row>
 							<el-col :span='24' style="margin-top: 5px;">
-								<el-input @keyup.enter.native="handleSearch" size="small" v-model="pageInfo.key" style="width: 170px;"
+								<el-input @keyup.enter.native="initPaperList" size="small" v-model="pageInfo.key" style="width: 170px;"
 								 placeholder="输入编号/标题/类型搜索" />
 							</el-col>
 						</el-row>
@@ -168,10 +168,6 @@
 			//跳转页面时触发
 			handleCurrentChange(val) {
 				this.pageInfo.currentPage = val
-				this.initPaperList()
-			},
-			//点击回车搜索时触发
-			handleSearch() {
 				this.initPaperList()
 			},
 			//点击顶部刷新按钮触发

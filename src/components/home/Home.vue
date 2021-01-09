@@ -43,7 +43,7 @@
 						<i class="el-icon-s-promotion"></i>
 						<span slot="title">由我出卷</span>
 					</el-menu-item>
-					<el-menu-item index="/PaperList">
+					<el-menu-item index="/PaperManage">
 						<i class="el-icon-document-copy"></i>
 						<span slot="title">试卷管理</span>
 					</el-menu-item>
@@ -55,7 +55,7 @@
 						<i class="el-icon-menu"></i>
 						<span slot="title">我的题库</span>
 					</el-menu-item>
-					<el-menu-item index="/Questionlist">
+					<el-menu-item index="/SystemQue">
 						<i class="el-icon-s-grid"></i>
 						<span slot="title">INTELLIE题库</span>
 					</el-menu-item>
@@ -92,6 +92,22 @@
 							<el-button type="primary" @click="joinHandle(2)">确 定</el-button>
 						</div>
 					</el-dialog>
+					<!-- 公告框 -->
+					<el-dialog :visible.sync="noticeVisible" width="30%" center>
+						<span slot="title">
+							<span class="sys-tl-bg">系统通知</span>
+							<el-divider></el-divider>
+						</span>
+						<div>
+							<el-image style="width: 100%; height: 100px" src="./img/yy2.jpg" fit="contain"></el-image>
+							<div>
+								系统通知
+							</div>
+						</div>
+						<span slot="footer" class="dialog-footer">
+							<el-button type="primary" @click="noticeVisible = false">确 定</el-button>
+						</span>
+					</el-dialog>
 				</el-footer>
 			</el-container>
 		</el-container>
@@ -103,9 +119,9 @@
 	var tabMap = new Map([
 		['/Make', '新建试卷'],
 		['/Welcome', '欢迎页'],
-		['/PaperList', '试卷列表'],
+		['/PaperManage', '我的试卷'],
 		['/Personal', '个人信息'],
-		['/Questionlist', 'INTELLIE题库'],
+		['/SystemQue', 'INTELLIE题库'],
 		['/RealName', '实名认证'],
 		['/PersonalQue', '我的题库'],
 		['/Analysis', '数据分析'],
@@ -137,6 +153,7 @@
 
 				//用户信息
 				user: new Object(),
+				noticeVisible: false,
 
 				//Setting组件中的数据
 				setting: { //基础设置
@@ -150,6 +167,8 @@
 		},
 		created() {
 			this.initPage()
+			//获取系统公告 和 广告位信息
+			this.advInfo()
 		},
 		mounted() {
 			var path = this.$route.path
@@ -189,10 +208,14 @@
 						this.$router.push("/Login") //未登录 跳转到登录界面
 					}
 				}).catch(e => {
-					this.$router.push("/Login")
+					this.$router.push("/Error")
 				})
 			},
-			joinHandle(flag) { //点击加入考试时触发 1打开弹框 2跳转到考试面版
+			advInfo(){
+				this.noticeVisible = true
+			},
+			//点击加入考试时触发 1打开弹框 2跳转到考试面版
+			joinHandle(flag) { 
 				if (flag === 1) {
 					this.dialogVisible = true //打开输入框
 					return
@@ -200,23 +223,7 @@
 				this.$router.push("/Core")
 
 			},
-			exitLogin() { //退出登录
-				this.$confirm('将要退出当前账号, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					this.$axios({
-						url: "/access/exitLogin",
-						method: "GET",
-					}).then(res => {}).catch(e => {
-						console.log("网络异常")
-						this.$router.push("/INTELLIE")
-					})
-				}).catch(() => {
-					return
-				});
-			},
+			/*****界面功能相关******/
 			handleSelectAside(key) { //选中侧边导航栏时 新增标签卡 并定位到新标签卡 并使路由指向标签卡对应的地址
 				if (!tabMap.has(key)) {
 					return
@@ -295,6 +302,27 @@
 				});
 				return flag
 			}
+			/*****界面功能相关******/
+			//退出登录
+			,exitLogin() {
+				this.$confirm('将要退出当前账号, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					this.$axios({
+						url: "/access/exitLogin",
+						method: "GET",
+					}).then(res => {
+						this.initPage()
+					}).catch(e => {
+						console.log(e)
+						this.$router.push("/INTELLIE")
+					})
+				}).catch(() => {
+					return
+				});
+			},
 		}
 	}
 </script>

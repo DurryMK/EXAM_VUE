@@ -1,7 +1,7 @@
-// 0. 如果使用模块化机制编程，导入Vue和VueRouter，要调用 Vue.use(VueRouter)
+// 如果使用模块化机制编程，导入Vue和VueRouter，要调用 Vue.use(VueRouter)
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// 1. 定义 (路由) 组件。
+// 定义 (路由) 组件。
 // 可以从其他文件 import 进来
 
 import App from '../App.vue'
@@ -9,6 +9,8 @@ import App from '../App.vue'
 const Core = () =>import("@/components/core/Core")
 //加载页
 const Loading = () => import("@/components/Loading")
+//错误页
+const Error = () =>import("@/components/Error")
 //个人中心面板
 const Home = () => import("@/components/home/Home")
 //登录页
@@ -20,9 +22,9 @@ const Personal = () => import("@/components/home/Personal")
 //欢迎页
 const Welcome = () => import("@/components/Welcome")
 //试卷列表面板
-const PaperList = () => import("@/components/home/PaperList")
+const PaperManage = () => import("@/components/home/PaperManage")
 //系统题库列表
-const QuestionList = () =>import("@/components/home/QuestionList")
+const SystemQue = () =>import("@/components/home/SystemQue")
 //实名认证面板
 const RealName = () =>import("@/components/home/RealName")
 //个人题库面板
@@ -34,6 +36,7 @@ const Memeber = () =>import("@/components/home/Memeber")
 //查看成绩面板
 const ScoreView = () =>import("@/components/home/ScoreView")
 
+
 Vue.use(VueRouter)
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -41,7 +44,7 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
 	return originalPush.call(this, location).catch(err => err)
 }
-// 2.定义路由
+// 定义路由
 // 每个路由映射一个组件。
 const routes = [{
 		path: '/',
@@ -52,6 +55,11 @@ const routes = [{
 		path: '/Login',
 		name: 'Login', //登录组件，
 		component: Login //对应的组件模板
+	},
+	{
+		path: '/Error',
+		name: 'Error', //登录组件，
+		component: Error //对应的组件模板
 	},
 	{
 		path: '/Core',
@@ -67,9 +75,9 @@ const routes = [{
 		name: 'Home', //主页面，
 		component: Home, //对应的组件模板
 		children: [{
-				path: '/PaperList',
-				name: 'PaperList', //试卷列表，
-				component: PaperList //对应的组件模板
+				path: '/PaperManage',
+				name: 'PaperManage', //试卷列表，
+				component: PaperManage //对应的组件模板
 			}, {
 				path: '/make',
 				name: 'Make', //创建试卷，
@@ -86,9 +94,9 @@ const routes = [{
 				component: Personal //对应的组件模板
 			}, 
 			{
-				path: '/QuestionList',
-				name: 'QuestionList', //题目列表，
-				component: QuestionList //对应的组件模板
+				path: '/SystemQue',
+				name: 'SystemQue', //题目列表，
+				component: SystemQue //对应的组件模板
 			},
 			{
 				path: '/RealName',

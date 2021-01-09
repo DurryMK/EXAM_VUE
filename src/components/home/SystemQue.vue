@@ -1,19 +1,13 @@
 <template>
 	<el-container style="height: 750px;">
 		<el-main>
-			<el-divider>INTELLIE系统题库&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
-			<el-table :data="pageInfo.infos" style="width: 100%;" :max-height="680" :highlight-current-row="true">
+			<el-divider><span class="sys-tl-md">INTELLIE系统题库</span>&nbsp;&nbsp;&nbsp;<i class="el-icon-info" @click="hintInfo"></i></el-divider>
+			<el-table v-loading="loading" :data="tableData" style="width: 100%;" :max-height="680" :highlight-current-row="true">
 				<el-table-column type="expand">
 					<template slot-scope="props">
 						<el-form label-position="left" inline class="demo-table-expand">
 							<el-form-item label="标题:">
 								<span>{{ props.row.title }}</span>
-							</el-form-item>
-							<el-form-item label="内容:">
-								<span>{{ props.row.content }}</span>
-							</el-form-item>
-							<el-form-item label="上传时间:">
-								<span>{{ props.row.time }}</span>
 							</el-form-item>
 							<el-form-item label="类型:">
 								<span>{{ props.row.type }}</span>
@@ -21,11 +15,17 @@
 							<el-form-item label="难度:">
 								<span>{{ props.row.level }}</span>
 							</el-form-item>
+							<el-form-item label="上传时间:">
+								<span>{{ props.row.time }}</span>
+							</el-form-item>
 							<el-form-item label="来源:">
 								<span>{{ props.row.from }}</span>
 							</el-form-item>
 							<el-form-item label="查看原题:">
 								<el-link :href="props.row.origin" type="primary">{{props.row.origin}}</el-link>
+							</el-form-item>
+							<el-form-item label="内容:">
+								<span>{{ props.row.content }}</span>
 							</el-form-item>
 						</el-form>
 					</template>
@@ -34,27 +34,20 @@
 				</el-table-column>
 				<el-table-column label="标题" prop="title" width="350">
 				</el-table-column>
-				<el-table-column prop="level" label="难度" width="100" :filters="[{'text':'算法','value':'算法'},]" :filter-method="filterLevel"
+				<el-table-column prop="level" label="难度" width="100" :filters="levels" :filter-method="filterLevel"
 				 filter-placement="bottom-end">
 					<template slot-scope="scope">
 						<el-tag :type="'danger'" disable-transitions>{{scope.row.level}}</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="type" label="分类" width="100" :filters="[{'text':'算法','value':'算法'},]" :filter-method="filterType"
-				 filter-placement="bottom-end">
+				<el-table-column prop="type" label="分类" width="100" :filters="types" :filter-method="filterType" filter-placement="bottom-end">
 					<template slot-scope="scope">
 						<el-tag :type="'success'" disable-transitions>{{scope.row.type}}</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="time" label="创建时间" width="145" :filters="[{'text':'算法','value':'算法'},]" :filter-method="filterTime"
-				 filter-placement="bottom-end">
-					<template slot-scope="scope">
-						<el-tag :type="'primary'" disable-transitions>{{scope.row.time}}</el-tag>
-					</template>
-				</el-table-column>
 				<el-table-column align="right">
 					<template slot="header" slot-scope="scope">
-						<el-input v-model="pageInfo.searchKey" size="mini" style="width: 150px;" placeholder="输入标题/类型搜索" />
+						<el-input @keyup.enter.native="doQuery" v-model="pageInfo.key" size="mini" style="width: 150px;" placeholder="输入标题/类型搜索" />
 					</template>
 					<template slot-scope="scope">
 						<el-button icon="el-icon-circle-plus" plain type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">Add</el-button>
@@ -67,7 +60,7 @@
 			 :page-sizes="pageSizes" :page-size="pageInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageInfo.total">
 			</el-pagination>
 			<!-- 解释说明的提示框 -->
-			<el-dialog title="INTELLIE题库" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+			<el-dialog title="INTELLIE题库" :visible.sync="dialogVisible" width="30%">
 				<ul>
 					<li>
 						<span>INTELLIE题库是由系统提供的题库</span>
@@ -80,30 +73,39 @@
 					<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
 				</span>
 			</el-dialog>
-
 		</el-footer>
 	</el-container>
 </template>
 
 <script>
 	export default {
-		name: "QuestionList",
+		name: "SystemQue",
 		data() {
 			return {
 				dialogVisible: false,
 				pageSizes: [5, 10, 15, 20, 25],
 				pageInfo: {
-					types: [],
-					infos: [],
-					levels: [],
+					currentPage: 1,
 					pageSize: 10,
 					total: 0,
-					currentPage: 1,
-					searchKey: "", //搜索关键字
-					type: "",
-					level: "",
-					createTime: "",
-				}
+					key: "",
+				},
+				tableData: [{
+					title: 'INTELLIE',
+					content: '',
+					time: '',
+					type: '',
+					level: '',
+					origin: '',
+					from: '',
+					personal: '',
+					level: '',
+					runningStatus: '',
+				}],
+				levels: [{}],
+				types: [{}],
+				loading: false,
+
 			}
 		},
 		mounted() {
@@ -117,30 +119,50 @@
 				this.dialogVisible = true
 			},
 			doQuery() { //提交PageInfo 查询数据
+				this.loading = true
 				this.$axios({
-					url: "/que/genQuestionList",
+					url: "/que/initPageSys",
 					method: "POST",
-					params: {
-						param: this.$qs.stringify(this.pageInfo),
-					}
+					params: this.pageInfo
 				}).then(res => {
 					if (res.data.E_BACKSTATUS == '0') {
-						//返回的数据填充页面
 						this.fullPage(res.data.E_BACKINFO)
 					} else {
 						this.hint("数据加载失败，请刷新页面重试", "error")
 					}
 				}).catch(e => {
+					console.log(e)
 					this.hint("数据加载失败，请检查网络状态", "error")
 				})
 			},
+			//填充页面
 			fullPage(data) {
-				this.pageInfo = data
-				console.log(this.pageInfo.infos[0].type)
-
+				console.log(data)
+				this.pageInfo = data.condition
+				this.tableData = data.data.list
+				this.levels = []
+				for (var index in data.data.levels) {
+					this.levels.push({
+						text: data.data.levels[index],
+						value: data.data.levels[index]
+					})
+				}
+				this.types = []
+				for (var index in data.data.types) {
+					this.types.push({
+						text: data.data.types[index],
+						value: data.data.types[index]
+					})
+				}
+				this.loading = false
 			},
-			resetDateFilter() {
-				this.$refs.filterTable.clearFilter('date');
+			handleSizeChange(val) {
+				this.pageInfo.pageSize = val
+				this.doQuery()
+			},
+			handleCurrentChange(val) {
+				this.pageInfo.currentPage = val
+				this.doQuery()
 			},
 			clearFilter() {
 				this.$refs.filterTable.clearFilter();
@@ -152,27 +174,11 @@
 				return row.type === value;
 			},
 			filterLevel(value, row) {
-				return row.tag === value;
-			},
-			filterTime(value, row) {
-				return row.tag === value;
+				return row.level === value;
 			},
 			filterHandler(value, row, column) {
 				const property = column['property'];
 				return row[property] === value;
-			},
-			handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			},
-			handleClose(done) {
-				this.$confirm('确认关闭？')
-					.then(_ => {
-						done();
-					})
-					.catch(_ => {});
 			}
 		}
 	}

@@ -5,7 +5,7 @@ import axios from 'axios'
 import ElementUI from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css'
 import router from './router/index.js'
-import VueCookies from 'vue-cookies'
+import VueCookies from 'vue-cookie'
 import Qs from 'qs'
 import VueClipboard from 'vue-clipboard2'
 import consts from './store/const'
@@ -14,7 +14,6 @@ Vue.use(router) //路由
 Vue.use(VueClipboard) //用于操作剪切板
 Vue.use(VueCookies)
 
-Vue.prototype.$cookie = VueCookies //用于操作cookie
 Vue.prototype.$axios = axios //异步请求
 Vue.prototype.$qs = Qs //json数据格式转化
 Vue.config.productionTip = false
@@ -26,6 +25,7 @@ axios.defaults.crossDomain = true
 //请求默认地址
 axios.defaults.baseURL = "http://127.0.0.1:8763/exam_du"
 
+Vue.prototype.upLoad = "http://127.0.0.1:8763/exam_du/upload"
 //配置统一的请求头 添加Authorization参数
 axios.interceptors.request.use(function(config) {
 		var key = store.state.publicKey
@@ -54,7 +54,6 @@ function getAuthorization(key) {
 	let uuid = s.join("")
 	var author = new Date().getTime() + ";" + uuid
 	var encrypt = new JSEncrypt();
-	// encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----' + key + '-----END PUBLIC KEY-----');
 	encrypt.setPublicKey(key);
 	var encrypted = encrypt.encrypt(JSON.stringify(author));
 	return encrypted

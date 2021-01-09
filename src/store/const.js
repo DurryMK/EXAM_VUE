@@ -18,6 +18,7 @@ const consts = {
 				delivery: false, //考试是否限时
 				duration: null, //限时时长
 				submit: '1', //是否允许随时交卷
+				presonal:false,//是否公开试卷
 
 				isRname: false, //仅允许实名考生参加
 				isDoRame: false, //考前进行人脸识别

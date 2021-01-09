@@ -269,7 +269,9 @@
 				},
 			}
 		},
-		mounted() {},
+		mounted() {
+			
+		},
 		methods: {
 			handleSelect(key, keyPath) {
 				console.log(key, keyPath);
@@ -287,7 +289,7 @@
 			},
 			//快速登录
 			quickLogin(formName) {
-				this.$refs[formName].validate(function(boolean,object){
+				this.$refs[formName].validate(function(boolean, object) {
 					console.log(boolean)
 					if (boolean) {
 						alert('submit!');
@@ -370,9 +372,12 @@
 				}).then(res => {
 					this.quick_loading = false
 					if (res.data.E_BACKSTATUS == '0') {
-						this.hint("验证码已发送", "success")
+						this.hint("[测试]验证码已发送", "success")
+						this.quickForm.vcode = res.data.E_BACKINFO
+					} else if(res.data.E_BACKSTATUS == '-1') {
+						this.hint(res.data.E_BACKINFO, "error")
 					} else {
-						this.hint("发送验证码失败", "error")
+						this.$router.push("/ERROR")
 					}
 				}).catch(e => {
 					this.hint("发送验证码失败", "error")
